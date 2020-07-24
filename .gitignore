@@ -1,0 +1,6 @@
+*.a
+Makefile
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+geometry_tests
