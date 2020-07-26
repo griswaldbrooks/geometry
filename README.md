@@ -3,6 +3,15 @@
 Docker version 19.03
 ```
 
+# Set up docker permissions
+This allows you to not type sudo on the host when starting docker.
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+
 # Build the repository image
 ```
 docker build -t gillwald-geometry .
