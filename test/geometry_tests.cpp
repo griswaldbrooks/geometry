@@ -2,6 +2,7 @@
 
 // C++ Standard Library
 #include <vector>
+#include <tuple>
 
 // Gtest
 #include <gtest/gtest.h>
@@ -295,6 +296,36 @@ TEST(raytrace, negative_length) {
 	// THEN the resulting line should have 3 elements equal to the expected vector
 	EXPECT_EQ(pixels.size(), 0);	
 }
+
+class polygonOutlineCellsTests : public :: testing::TestWithParam<std::tuple<std::vector<Cell>, int, int, std::vector<Cell>>> {
+
+};
+
+TEST_P(polygonOutlineCellsTests, outline_tests){
+	// GIVEN a the vertices of a small square, and a large size
+	const std::vector<Cell> vertices = std::get<0>(GetParam());
+	const auto size_x = std::get<1>(GetParam());
+
+	// WHEN the outline is created
+	const auto outline = polygonOutlineCells(vertices, size_x);
+
+	// THEN the resulting outline should be 20 elements and equal to expected 
+	const auto expected_size = std::get<2>(GetParam());
+	const auto expected_elements = std::get<3>(GetParam());
+
+	EXPECT_EQ(outline.size(), expected_size);
+	EXPECT_THAT(outline, ElementsAreArray(expected_elements));		
+
+}
+
+INSTANTIATE_TEST_CASE_P(
+	polygonOutlineCells_tests,
+	polygonOutlineCellsTests,
+	::testing::Values(
+		std::make_tuple(std::vector<Cell>{{0,0}}, std::numeric_limits<int>::max(), 1, std::vector<Cell>{{0,0}} )
+		)
+	);
+
 
 }  // namespace geometry
 

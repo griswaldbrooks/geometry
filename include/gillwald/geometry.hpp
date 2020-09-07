@@ -44,4 +44,15 @@ namespace geometry {
    * @returns Pixel coordinates representing line
    */	  
   [[nodiscard]] std::vector<Cell> raytrace(const Cell& start, const Cell& end, int max_length);
+
+  /**
+   * @brief Creates an outline between vertices
+   * @param polygon Vertices of the polygon
+   * @param size_x Max number of elements?
+   * @returns Pixel coordinates representing outline of polygon
+   */	  
+
+  [[nodiscard]] std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x);
+
+
 }  // namespace geometry

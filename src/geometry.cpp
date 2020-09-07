@@ -107,5 +107,24 @@ namespace geometry {
 
 	}
 
+	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {
+	  // OMPL_INFORM("size_x: %d", size_x);
+	  std::vector<Cell> out = polygon;
+	  // auto gather = [&out, size_x](int ndx){
+	  //   // OMPL_INFORM("gather ndx = %d", ndx);
+	  //   out.push_back(indexToCell(ndx, size_x));
+	  // };
+	  // for (unsigned int i = 0; i < polygon.size() - 1; ++i) {
+	  //   raytraceLine(polygon[i], polygon[i + 1], size_x, gather);
+	  // }
+	  // if (!polygon.empty()) {
+	  //   const unsigned int last_index = polygon.size() - 1;
+	  //   // we also need to close the polygon by going from
+	  //   // the last point to the first
+	  //   raytraceLine(polygon[last_index], polygon[0], size_x, gather);
+	  // }
+	  return out;
+	}	
+
 
 }  // namespace geometry
