@@ -297,21 +297,29 @@ TEST(raytrace, negative_length) {
 	EXPECT_EQ(pixels.size(), 0);	
 }
 
-class polygonOutlineCellsTests : public :: testing::TestWithParam<std::tuple<std::vector<Cell>, int, int, std::vector<Cell>>> {
-
+struct PolygonScenario{
+	std::vector<Cell> vertices;
+	int size_x;
+	int expected_size;
+	std::vector<Cell> expected_elements;
 };
 
+class polygonOutlineCellsTests : public :: testing::TestWithParam<PolygonScenario> {};
+
 TEST_P(polygonOutlineCellsTests, outline_tests){
+
+	auto curr_scenario = GetParam();
+
 	// GIVEN a the vertices of a small square, and a large size
-	const std::vector<Cell> vertices = std::get<0>(GetParam());
-	const auto size_x = std::get<1>(GetParam());
+	const std::vector<Cell> vertices = curr_scenario.vertices;
+	const auto size_x = curr_scenario.size_x;
 
 	// WHEN the outline is created
 	const auto outline = polygonOutlineCells(vertices, size_x);
 
 	// THEN the resulting outline should be 20 elements and equal to expected 
-	const auto expected_size = std::get<2>(GetParam());
-	const auto expected_elements = std::get<3>(GetParam());
+	const auto expected_size = curr_scenario.expected_size;
+	const auto expected_elements = curr_scenario.expected_elements;
 
 	EXPECT_EQ(outline.size(), expected_size);
 	EXPECT_THAT(outline, ElementsAreArray(expected_elements));		
@@ -322,10 +330,11 @@ INSTANTIATE_TEST_CASE_P(
 	polygonOutlineCells_tests,
 	polygonOutlineCellsTests,
 	::testing::Values(
-		std::make_tuple(std::vector<Cell>{{0,0}}, std::numeric_limits<int>::max(), 1, std::vector<Cell>{{0,0}} )
+		PolygonScenario{{{0,0}}, std::numeric_limits<int>::max(), 1, {{0,0}}},
+		PolygonScenario{{{0,0},{1,0},{1,1},{0,1}}, std::numeric_limits<int>::max(), 4, {{0,0},{1,0},{1,1},{0,1}}},
+		PolygonScenario{{{0,0},{5,0},{5,5},{0,5}}, std::numeric_limits<int>::max(), 20, {{0,0},{1,0},{2,0},{3,0},{4,0},{5,0},{5,1},{5,2},{5,3},{5,4},{5,5},{4,5},{3,5},{2,5},{1,5},{0,5},{0,4},{0,3},{0,2},{0,1}}}
 		)
 	);
-
 
 }  // namespace geometry
 
