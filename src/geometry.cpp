@@ -1,28 +1,37 @@
 // Copyright 2020 Gillwald
 
 // C++ Standard Library
+#include <array>
 #include <cmath>
 #include <vector>
 
 // Gillwald
 #include <gillwald/geometry.hpp>
 
+struct Cell {
+  int x;
+  int y;
+};
+
 namespace geometry {
 
+	std::vector<Cell> bresenham_conversion(int x0, int y0, int x1, int y1){
+		return bresenham_conversion(Cell{x0, y0}, Cell{x1, y1});
+	}
 
-	std::vector<std::vector<int>> bresenham_conversion(int x0, int y0, int x1, int y1){
+	std::vector<Cell> bresenham_conversion(const Cell& start, const Cell& end){
 
 	  // Vector of points
-	  std::vector<std::vector<int>> v;
+	  std::vector<Cell> v;
 
 	  // Beginning point
-	  int p0 [2] = {x0, y0};
+	  int p0 [2] = {start.x, start.y};
 
 	  // Ending point
-	  int p1 [2] = {x1, y1};
+	  int p1 [2] = {end.x, end.y};
 
 	  // Change in x and y from beginning to end
-	  int deltas [2] = {(x1 - x0), (y1 - y0)};
+	  int deltas [2] = {(end.x - start.x), (end.y - start.y)};
 
 	  // Absolute values of  the changes
 	  int changes [2] = {abs(deltas[0]),abs(deltas[1])};
@@ -32,17 +41,9 @@ namespace geometry {
 
 	  // Which direction to step towards for the x and y functions
 	  int steps [2] = {sgn(deltas[0]), sgn(deltas[1])};
-	  
-	  // Array that dictates the dominant direction
-	  int idx [2] = {0};
 
-	  if (changes[0] > changes[1]) {
-	    idx[0] = 0;
-	    idx[1] = 1;
-	  } else {
-	    idx[0] = 1;
-	    idx[1] = 0;
-	  }
+	  // Array that dictates the dominant direction
+    const auto idx = changes[0] > changes[1] ? std::array<int, 2>{0, 1} : std::array<int, 2>{1, 0};
 
 	  // error scaled off of change in dominant direction
 	  float err = (float)changes[idx[0]]/2.0;
@@ -54,7 +55,7 @@ namespace geometry {
 	  while (point[idx[0]] != p1[idx[0]]) {
 
 	    // Create and push back vector into final vector
-	    std::vector<int> temp {point[0], point[1]};
+	    Cell temp {point[0], point[1]};
 
 	    v.push_back(temp);
 
@@ -74,25 +75,11 @@ namespace geometry {
 	  }
 
 	  // Push final point
-	  std::vector<int> temp {p1[0], p1[1]};
+	  Cell temp {p1[0], p1[1]};
 
 	  v.push_back(temp);
 
 	  return v;
-
-	}
-
-	std::vector<Cell> bresenham_conversion(const Cell &start, const Cell &end){
-
-		const auto pixels = bresenham_conversion(start.x, start.y, end.x, end.y);
-
-		std::vector<Cell> cells;
-
-		for (const auto &pixel:pixels) {
-			cells.emplace_back(Cell{pixel[0], pixel[1]});
-		}
-
-		return cells;
 
 	}
 
@@ -101,11 +88,10 @@ namespace geometry {
 	  	return {};
 	  }
 	  // Get the interpolated pixels bresenham
-	  const auto pixels = bresenham_conversion(start, end);	 
+	  const auto pixels = bresenham_conversion(start, end);
 
 	  return {pixels.begin(), pixels.begin() + std::min(static_cast<int>(pixels.size()),max_length)};
 
 	}
-
 
 }  // namespace geometry

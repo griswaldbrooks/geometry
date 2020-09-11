@@ -20,7 +20,7 @@ namespace geometry {
 * @param os The ostream object
 * @param pixels The vector of cells to be printed
 * @returns reference to the ostream object
-*/	
+*/
 std::ostream& operator<<(std::ostream& os, const std::vector<Cell>& pixels){
 	os << "\n";
 	for (const auto& pixel:pixels) {
@@ -35,22 +35,20 @@ std::ostream& operator<<(std::ostream& os, const std::vector<Cell>& pixels){
 * @param lhs The cell on the left side of the == operator
 * @param rhs The cell on the right side of the == operator
 * @returns boolean on if the x and y values of the Cell are equal
-*/	
+*/
 bool operator==(const Cell &lhs,const Cell &rhs) {
 	return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
-
 
 /**
 * @brief Overloads the == operator to allow equality check between pixel return of the overloaded bresenham function
 * @param lhs The "cell" on the left side of the == operator
 * @param rhs The cell on the right side of the == operator
 * @returns boolean on if the x and y values of the pixels are equal
-*/	
+*/
 bool operator==(const std::vector<int> &lhs,const Cell &rhs) {
 	return (lhs[0] == rhs.x) && (lhs[1] == rhs.y);
 }
-
 
 TEST(bresenham_conversion, overloaded_function_check){
 	// GIVEN two endpoints
@@ -81,61 +79,60 @@ TEST(bresenham_conversion, front_and_back_cells) {
 	EXPECT_EQ(pixels.back(), Cell(5,0));
 }
 
-
 TEST(bresenham_conversion, horz_line_going_right) {
 	// GIVEN a horizontal line endpoints that go from left to right
 	const Cell start {0,0};
-	const Cell end {5,0};	
+	const Cell end {5,0};
 
 	// WHEN the interpolated pixels are produced
 	const auto pixels = bresenham_conversion(start, end);
-		
+
 	// THEN the resulting line has 6 elements, which should be equal to the expected vector
 	EXPECT_EQ(pixels.size(),6);
 	const std::vector<Cell> expected{{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}};
-	EXPECT_THAT(pixels, ElementsAreArray(expected));	
+	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
 TEST(bresenham_conversion, horz_line_going_left) {
 	// GIVEN a horizontal line endpoints that goes from right to left
 	const Cell start {4,5};
-	const Cell end {-1,5};	
+	const Cell end {-1,5};
 
 	// WHEN the interpolated pixels are produced
 	const auto pixels = bresenham_conversion(start, end);
-		
+
 	// THEN the resulting line has 6 elements, which should be equal to the expected vector
 	EXPECT_EQ(pixels.size(),6);
 	const std::vector<Cell> expected{{4, 5}, {3, 5}, {2, 5}, {1, 5}, {0, 5}, {-1, 5}};
-	EXPECT_THAT(pixels, ElementsAreArray(expected));	
+	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
 TEST(bresenham_conversion, vert_line_going_up) {
 	// GIVEN vertical line endpoints that go from bottom to top
 	const Cell start {-2,-3};
-	const Cell end {-2,2};	
+	const Cell end {-2,2};
 
 	// WHEN the interpolated pixels are produced
-	const auto pixels = bresenham_conversion(start, end);	
+	const auto pixels = bresenham_conversion(start, end);
 
 	// THEN the resulting line has 6 elements, which should be equal to the expected vector
 	EXPECT_EQ(pixels.size(), 6);
 	const std::vector<Cell> expected{{-2, -3}, {-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2}};
-	EXPECT_THAT(pixels, ElementsAreArray(expected));	
+	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
 TEST(bresenham_conversion, vert_line_going_down) {
 	// GIVEN vertical line endpoints that go from top to bottom
 	const Cell start {1,2};
-	const Cell end {1,-3};	
+	const Cell end {1,-3};
 
 	// WHEN the pixels are interpolated from the endpoints
-	const auto pixels = bresenham_conversion(start, end);	
+	const auto pixels = bresenham_conversion(start, end);
 
 	// THEN the resulting line has 6 elements, which should equal to the expected vector
 	EXPECT_EQ(pixels.size(), 6);
 	const std::vector<Cell> expected{{1, 2}, {1, 1}, {1, 0}, {1, -1}, {1, -2}, {1, -3}};
-	EXPECT_THAT(pixels, ElementsAreArray(expected));	
+	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
 TEST(bresenham_conversion, point_check) {
@@ -149,7 +146,7 @@ TEST(bresenham_conversion, point_check) {
 	// THEN there should be one pixel produced, which should equal to the expected vector
 	EXPECT_THAT(pixels.size(), 1);
 	const std::vector<Cell> expected{{0,0}};
-	EXPECT_THAT(pixels, ElementsAreArray(expected));	
+	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
 TEST(bresenham_conversion, line_going_up_and_right) {
@@ -163,7 +160,7 @@ TEST(bresenham_conversion, line_going_up_and_right) {
 	// THEN the resulting line has 6 elements and should equal the expected vector
 	EXPECT_EQ(pixels.size(), 6);
 	const std::vector<Cell> expected {{0, 0}, {1, 1}, {2, 1}, {3, 2}, {4, 2}, {5, 3}};
-	EXPECT_THAT(pixels, ElementsAreArray(expected));	
+	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
 TEST(bresenham_conversion, line_going_down_and_left) {
@@ -190,8 +187,8 @@ TEST(raytrace, point_check) {
 	const auto pixels = raytrace(startPix, endPix, max_ray_length);
 
 	// THEN the resulting line should have one element equal to the expected vector
-	EXPECT_EQ(pixels.size(), 1);	
-	const std::vector<Cell> expected{{0, 0}};	
+	EXPECT_EQ(pixels.size(), 1);
+	const std::vector<Cell> expected{{0, 0}};
 	EXPECT_THAT(pixels,ElementsAreArray(expected));
 }
 
@@ -202,11 +199,11 @@ TEST(raytrace, horz_line_going_right) {
 	const int max_length = 10; // This is an arbitrary number
 
 	// WHEN the interpolated pixels are produced
-	const auto pixels = raytrace(start, end, max_length);	
+	const auto pixels = raytrace(start, end, max_length);
 
 	// THEN the resulting line should have 6 elements equal to the expected vector
 	const std::vector<Cell> expected{{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}};
-	EXPECT_EQ(pixels.size(),(6));	
+	EXPECT_EQ(pixels.size(),(6));
 	EXPECT_THAT(pixels,ElementsAreArray(expected));
 }
 
@@ -217,11 +214,11 @@ TEST(raytrace, horz_line_going_left) {
 	const int max_length = 10; // This is an arbitrary number
 
 	// WHEN the interpolated pixels are produced
-	const auto pixels = raytrace(start, end, max_length);	
+	const auto pixels = raytrace(start, end, max_length);
 
 	// THEN the resulting line should have 6 elements equal to the expected vector
 	const std::vector<Cell> expected{{4, 5}, {3, 5}, {2, 5}, {1, 5}, {0, 5}, {-1, 5}};
-	EXPECT_EQ(pixels.size(),(6));	
+	EXPECT_EQ(pixels.size(),(6));
 	EXPECT_THAT(pixels,ElementsAreArray(expected));
 }
 
@@ -236,7 +233,7 @@ TEST(raytrace, vert_line_going_up) {
 
 	// THEN the resulting line should have 6 elements equal to the expected vector
 	const std::vector<Cell> expected{{-2, -3}, {-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2}};
-	EXPECT_EQ(pixels.size(),(6));	
+	EXPECT_EQ(pixels.size(),(6));
 	EXPECT_THAT(pixels,ElementsAreArray(expected));
 }
 
@@ -251,7 +248,7 @@ TEST(raytrace, vert_line_going_down) {
 
 	// THEN the resulting line should have 6 elements equal to the expected vector
 	const std::vector<Cell> expected{{1, 2}, {1, 1}, {1, 0}, {1, -1}, {1, -2}, {1, -3}};
-	EXPECT_EQ(pixels.size(),(6));	
+	EXPECT_EQ(pixels.size(),(6));
 	EXPECT_THAT(pixels,ElementsAreArray(expected));
 }
 
@@ -266,7 +263,7 @@ TEST(raytrace, max_ray_length_test) {
 
 	// THEN the resulting line should have 3 elements equal to the expected vector
 	const std::vector<Cell> expected{{0, 0}, {1, 0}, {2, 0}};
-	EXPECT_EQ(pixels.size(), 3);	
+	EXPECT_EQ(pixels.size(), 3);
 	EXPECT_THAT(pixels, ElementsAreArray(expected));
 }
 
@@ -280,7 +277,7 @@ TEST(raytrace, zero_length) {
 	const auto pixels = raytrace(start, end, max_length);
 
 	// THEN the resulting line should have 3 elements equal to the expected vector
-	EXPECT_EQ(pixels.size(), 0);	
+	EXPECT_EQ(pixels.size(), 0);
 }
 
 TEST(raytrace, negative_length) {
@@ -293,7 +290,7 @@ TEST(raytrace, negative_length) {
 	const auto pixels = raytrace(start, end, max_length);
 
 	// THEN the resulting line should have 3 elements equal to the expected vector
-	EXPECT_EQ(pixels.size(), 0);	
+	EXPECT_EQ(pixels.size(), 0);
 }
 
 }  // namespace geometry
