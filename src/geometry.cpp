@@ -3,6 +3,8 @@
 // C++ Standard Library
 #include <cmath>
 #include <vector>
+#include <iterator>
+#include <iostream>
 
 // Gillwald
 #include <gillwald/geometry.hpp>
@@ -107,22 +109,40 @@ namespace geometry {
 
 	}
 
-	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {
-	  // OMPL_INFORM("size_x: %d", size_x);
-	  std::vector<Cell> out = polygon;
-	  // auto gather = [&out, size_x](int ndx){
-	  //   // OMPL_INFORM("gather ndx = %d", ndx);
-	  //   out.push_back(indexToCell(ndx, size_x));
-	  // };
-	  // for (unsigned int i = 0; i < polygon.size() - 1; ++i) {
-	  //   raytraceLine(polygon[i], polygon[i + 1], size_x, gather);
-	  // }
-	  // if (!polygon.empty()) {
-	  //   const unsigned int last_index = polygon.size() - 1;
-	  //   // we also need to close the polygon by going from
-	  //   // the last point to the first
-	  //   raytraceLine(polygon[last_index], polygon[0], size_x, gather);
-	  // }
+	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {	  
+	  // The output vector of cells
+	  std::vector<Cell> out;	  
+
+	  // If the input is less than or equal to one element, return the input
+	  if (polygon.size() <= 1) {
+	  	return polygon;
+	  }
+
+	  // Iterator to the next vertex
+	  auto next_vrtx = polygon.begin();
+
+	  for (const auto &vertex:polygon) {
+	  	// If the next vertex is not the end iterator, advance the next_vertex to point to the next iterator
+	  	if (next_vrtx != polygon.end()) {
+	  		std::advance(next_vrtx,1);
+	  	} 
+	  	// After advancing, if the iterator points to the end, go back to the beginning, essentially closing the polygon
+	  	if (next_vrtx == polygon.end()) {
+	  		next_vrtx = polygon.begin();
+	  	}
+
+	  	// Generate the pixels from one vertex to the next
+	  	auto temp = raytrace(vertex, (*next_vrtx), size_x);
+
+	  	// Remove the last element of the vector because the next vertex will use it as a starting point i.e. don't duplicate pixels
+	  	temp.pop_back();
+
+	  	// Push the pixels into the out vector
+	  	for (const auto &pixel:temp) {
+	  		out.push_back(pixel);
+	  	}
+
+	  }
 	  return out;
 	}	
 
