@@ -330,9 +330,11 @@ INSTANTIATE_TEST_CASE_P(
 	polygonOutlineCells_tests,
 	polygonOutlineCellsTests,
 	::testing::Values(
-		PolygonScenario{{{0,0}}, std::numeric_limits<int>::max(), 1, {{0,0}}},
-		PolygonScenario{{{0,0},{1,0},{1,1},{0,1}}, std::numeric_limits<int>::max(), 4, {{0,0},{1,0},{1,1},{0,1}}},
-		PolygonScenario{{{0,0},{5,0},{5,5},{0,5}}, std::numeric_limits<int>::max(), 20, {{0,0},{1,0},{2,0},{3,0},{4,0},{5,0},{5,1},{5,2},{5,3},{5,4},{5,5},{4,5},{3,5},{2,5},{1,5},{0,5},{0,4},{0,3},{0,2},{0,1}}}
+		PolygonScenario{{{0,0}}, std::numeric_limits<int>::max(), 1, {{0,0}}}, // singular point
+		PolygonScenario{{{0,0},{1,0},{1,1},{0,1}}, std::numeric_limits<int>::max(), 4, {{0,0},{1,0},{1,1},{0,1}}}, // small square
+		PolygonScenario{{{0,0},{5,0},{5,5},{0,5}}, std::numeric_limits<int>::max(), 20, {{0,0},{1,0},{2,0},{3,0},{4,0},{5,0},{5,1},{5,2},{5,3},{5,4},{5,5},{4,5},{3,5},{2,5},{1,5},{0,5},{0,4},{0,3},{0,2},{0,1}}}, // big square
+		PolygonScenario{{{0,0},{4,1},{3,5},{-1,4}}, std::numeric_limits<int>::max(), 20, {{0,0},{1,0},{2,0},{3,1},{4,1},{4,2},{4,3},{3,4},{3,5},{5,4},{5,5},{4,5},{3,5},{2,5},{1,5},{0,4},{-1,4},{-1,3},{-1,2},{0,1}}}, // tilted square
+		PolygonScenario{{{0,0},{3,2},{6,1},{3,5}}, std::numeric_limits<int>::max(), 16, {{0,0},{1,1},{2,1},{3,2},{4,2},{5,1},{6,1},{5,2},{5,3},{4,4},{3,5},{2,4},{2,3},{1,2},{1,1},{0,0}}} // weird polygon
 		)
 	);
 
