@@ -1,6 +1,7 @@
 *.a
 Makefile
 *.cmake
+*.swp
 CMakeCache.txt
 CMakeFiles/
 geometry_tests

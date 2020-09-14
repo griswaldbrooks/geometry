@@ -1,10 +1,12 @@
 // Copyright 2020 Gillwald
 
 // C++ Standard Library
+#include <algorithm>
 #include <cmath>
 #include <vector>
 #include <iterator>
 #include <iostream>
+#include <numeric>
 
 // Gillwald
 #include <gillwald/geometry.hpp>
@@ -34,7 +36,7 @@ namespace geometry {
 
 	  // Which direction to step towards for the x and y functions
 	  int steps [2] = {sgn(deltas[0]), sgn(deltas[1])};
-	  
+
 	  // Array that dictates the dominant direction
 	  int idx [2] = {0};
 
@@ -103,48 +105,33 @@ namespace geometry {
 	  	return {};
 	  }
 	  // Get the interpolated pixels bresenham
-	  const auto pixels = bresenham_conversion(start, end);	 
+	  const auto pixels = bresenham_conversion(start, end);
 
 	  return {pixels.begin(), pixels.begin() + std::min(static_cast<int>(pixels.size()),max_length)};
 
 	}
 
-	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {	  
+	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {
+		// If the input is less than or equal to one element, return the input
+		if (polygon.size() <= 1) {
+			return polygon;
+		}
+
 	  // The output vector of cells
-	  std::vector<Cell> out;	  
+	  std::vector<std::vector<Cell>> traces;
+		traces.resize(polygon.size());
 
-	  // If the input is less than or equal to one element, return the input
-	  if (polygon.size() <= 1) {
-	  	return polygon;
-	  }
+    std::transform(polygon.begin(), std::prev(polygon.end()), std::next(polygon.begin()), traces.begin(), [] (const Cell& a, const Cell& b) {
+			return raytrace(a, b, std::numeric_limits<int>::max());
+		});
 
-	  // Iterator to the next vertex
-	  auto next_vrtx = polygon.begin();
-
-	  for (const auto &vertex:polygon) {
-	  	// If the next vertex is not the end iterator, advance the next_vertex to point to the next iterator
-	  	if (next_vrtx != polygon.end()) {
-	  		std::advance(next_vrtx,1);
-	  	} 
-	  	// After advancing, if the iterator points to the end, go back to the beginning, essentially closing the polygon
-	  	if (next_vrtx == polygon.end()) {
-	  		next_vrtx = polygon.begin();
-	  	}
-
-	  	// Generate the pixels from one vertex to the next
-	  	auto temp = raytrace(vertex, (*next_vrtx), size_x);
-
-	  	// Remove the last element of the vector because the next vertex will use it as a starting point i.e. don't duplicate pixels
-	  	temp.pop_back();
-
-	  	// Push the pixels into the out vector
-	  	for (const auto &pixel:temp) {
-	  		out.push_back(pixel);
-	  	}
-
-	  }
-	  return out;
-	}	
+		auto out = std::accumulate(traces.begin(), traces.end(), std::vector<Cell>(), [](std::vector<Cell> a, const std::vector<Cell>& b) {
+        a.insert(a.end(), b.begin(), b.end());
+        return a;
+    });
+		out.push_back(polygon.back());
+		return out;
+	}
 
 
 }  // namespace geometry
