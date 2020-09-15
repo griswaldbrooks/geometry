@@ -116,20 +116,22 @@ namespace geometry {
 		if (polygon.size() <= 1) {
 			return polygon;
 		}
-
-	  // The output vector of cells
-	  std::vector<std::vector<Cell>> traces;
-		traces.resize(polygon.size());
-
-    std::transform(polygon.begin(), std::prev(polygon.end()), std::next(polygon.begin()), traces.begin(), [] (const Cell& a, const Cell& b) {
-			return raytrace(a, b, std::numeric_limits<int>::max());
+	  // Start output with first element of polygon
+		std::vector<Cell> out{polygon.front()};
+		// Add segments
+	  std::vector<std::vector<Cell>> traces(polygon.size());
+    std::transform(polygon.begin(), std::prev(polygon.end()), std::next(polygon.begin()), traces.begin(),
+		[] (const Cell& a, const Cell& b) {
+			const auto trace = raytrace(a, b, std::numeric_limits<int>::max());
+			return std::vector<Cell>{std::next(trace.begin()), trace.end()};
 		});
-
-		auto out = std::accumulate(traces.begin(), traces.end(), std::vector<Cell>(), [](std::vector<Cell> a, const std::vector<Cell>& b) {
-        a.insert(a.end(), b.begin(), b.end());
-        return a;
-    });
-		out.push_back(polygon.back());
+		// Flatten segments
+		for (const auto& trace : traces) {
+        out.insert(out.end(), trace.begin(), trace.end());
+    }
+		// Add trace from end to start of polygon
+		const auto trace = raytrace(polygon.back(), polygon.front(), std::numeric_limits<int>::max());
+		out.insert(out.end(), std::next(trace.begin()), std::prev(trace.end()));
 		return out;
 	}
 
