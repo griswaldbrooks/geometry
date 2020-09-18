@@ -111,28 +111,32 @@ namespace geometry {
 
 	}
 
-	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {
-		// If the input is less than or equal to one element, return the input
-		if (polygon.size() <= 1) {
-			return polygon;
-		}
-	  // Start output with first element of polygon
-		std::vector<Cell> out{polygon.front()};
-		// Add segments
-	  std::vector<std::vector<Cell>> traces(polygon.size());
-    std::transform(polygon.begin(), std::prev(polygon.end()), std::next(polygon.begin()), traces.begin(),
-		[] (const Cell& a, const Cell& b) {
-			const auto trace = raytrace(a, b, std::numeric_limits<int>::max());
-			return std::vector<Cell>{std::next(trace.begin()), trace.end()};
-		});
-		// Flatten segments
-		for (const auto& trace : traces) {
-        out.insert(out.end(), trace.begin(), trace.end());
+  template<typename Itr, typename Fun>
+  void adjacent_iteration(Itr begin, const Itr& end, Fun fun) {
+    if (begin == end) return;
+    for (Itr adj = std::next(begin); adj != end; begin++, adj++) {
+      fun(*begin, *adj);
     }
-		// Add trace from end to start of polygon
-		const auto trace = raytrace(polygon.back(), polygon.front(), std::numeric_limits<int>::max());
-		out.insert(out.end(), std::next(trace.begin()), std::prev(trace.end()));
-		return out;
+  }
+
+	std::vector<Cell> polygonOutlineCells(const std::vector<Cell>& polygon, int size_x) {
+    // If the input is less than or equal to one element, return the input
+    if (polygon.size() <= 1) {
+      return polygon;
+    }
+		// Start output with first element of polygon
+		std::vector<Cell> out{polygon.front()};
+    // Add segments
+		adjacent_iteration(polygon.begin(), polygon.end(),
+    [&] (const Cell& a, const Cell& b) {
+      const auto trace = raytrace(a, b, std::numeric_limits<int>::max());
+      out.insert(out.end(), std::next(trace.begin()), trace.end());
+      return trace.size();
+    });
+    // Add trace from end to start of polygon
+    const auto trace = raytrace(polygon.back(), polygon.front(), std::numeric_limits<int>::max());
+    out.insert(out.end(), std::next(trace.begin()), std::prev(trace.end()));
+    return out;
 	}
 
 
